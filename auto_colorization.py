@@ -145,7 +145,8 @@ def yuv2rgb(yuv):
 
 
 def main():
-    filenames = sorted(glob.glob("COCOsubset/*.jpg"))
+    # filenames = sorted(glob.glob("COCOsubset/*.jpg"))
+    filenames = sorted(glob.glob("train2017/train2017/*.jpg"))
     batch_size = 1
     num_epochs = 1e+6
     epochs = num_epochs
@@ -221,7 +222,7 @@ def main():
  
 
     
-    optimizer = tf.train.GradientDescentOptimizer(0.0001)
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001)
     opt = optimizer.minimize(
         loss, global_step = global_step, gate_gradients=optimizer.GATE_NONE
     )
@@ -265,35 +266,40 @@ def main():
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
     
     try:
+        # Restore from checkpoint:
+        if len(saver.last_checkpoints) > 0:
+            saver.restore(sess, saver.last_checkpoints[0])
+            
         while not coord.should_stop():
             training_opt = sess.run(opt, feed_dict={phase_train: True, uv: 1})
             training_opt = sess.run(opt, feed_dict={phase_train: True, uv: 2})
             
             step = sess.run(global_step)
-            print(step)
+            # print(step)
             
             if step % 1 == 0:
                 pred_, pred_rgb_, colorimage_, grayscale_rgb_, cost, merged_ = sess.run(
                     [pred, pred_rgb, colorimage, grayscale_rgb, loss, merged],
                     feed_dict={phase_train: False, uv:3}
                 )
-                print("step: {}, cost: {}".format(step, cost))
-                
-                if step % 100 == 2:
+    
+                if step % 1000 == 2:
                     summary_image = concat_images(grayscale_rgb_[0], pred_rgb_[0])
                     summary_image = concat_images(summary_image, colorimage_[0])
                     plt.imsave('colornet_summary/' + str(step) + '_0', summary_image)
-                    
+                    print("step: {}, cost: {}".format(step, np.mean(cost)))
+    
                 sys.stdout.flush()
-                
+    
                 writer.add_summary(merged_, step)
                 writer.flush()
                 
-            if step % 1000000 == 99998:
-                save_path = saver.save(sess, "model.ckpt")
+            if step % 100000 == 99998:
+            # if step % 10000 == 1000:
+                save_path = saver.save(sess, "colornet_model/model.ckpt", global_step=global_step)
                 print("Model saved in file: {}".format(save_path))
                 sys.stdout.flush()
-            print("Actually working!")
+            # print("Actually working!")
 
     except tf.errors.OutOfRangeError:
         print('Done training -- epoch limit reached')

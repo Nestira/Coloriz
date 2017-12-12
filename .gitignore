@@ -2,10 +2,12 @@
 .ipynb_checkpoints
 COCOsubset
 MNIST_data
+Mask_RCNN/assets
+Mask_RCNN/images
 __pycache__
-batchnorm.py
 boston_house
 boston_house_high_level.py
+coco/
 colornet_log
 colornet_summary
 custom_estimator.py

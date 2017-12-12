@@ -1,0 +1,129 @@
+(tfgpu) ➜  411csc python auto_colorization.py
+2017-12-10 22:30:19.657870: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX
+2017-12-10 22:30:19.711297: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:892] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2017-12-10 22:30:19.711576: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 0 with properties: 
+name: GRID K520 major: 3 minor: 0 memoryClockRate(GHz): 0.797
+pciBusID: 0000:00:03.0
+totalMemory: 3.94GiB freeMemory: 3.91GiB
+2017-12-10 22:30:19.711613: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:0) -> (device: 0, name: GRID K520, pci bus id: 0000:00:03.0, compute capability: 3.0)
+step: 2, cost: 0.2809942662715912
+step: 1002, cost: 0.23219940066337585
+step: 2002, cost: 0.2515341341495514
+step: 3002, cost: 0.248252272605896
+step: 4002, cost: 0.18423113226890564
+step: 5002, cost: 0.25964978337287903
+step: 6002, cost: 0.24526622891426086
+step: 7002, cost: 0.29591360688209534
+step: 8002, cost: 0.2402997463941574
+step: 9002, cost: 0.2398749142885208
+step: 10002, cost: 0.25056296586990356
+step: 11002, cost: 0.25221362709999084
+step: 12002, cost: 0.24615967273712158
+step: 13002, cost: 0.2433626353740692
+step: 14002, cost: 0.23929229378700256
+step: 15002, cost: 0.2549877464771271
+step: 16002, cost: 0.2306423783302307
+step: 17002, cost: 0.2509610056877136
+step: 18002, cost: 0.21705950796604156
+step: 19002, cost: 0.2420426458120346
+step: 20002, cost: 0.25231850147247314
+step: 21002, cost: 0.28727948665618896
+step: 22002, cost: 0.26931142807006836
+step: 23002, cost: 0.2611388862133026
+step: 24002, cost: 0.23219864070415497
+step: 25002, cost: 0.24275565147399902
+step: 26002, cost: 0.24436040222644806
+step: 27002, cost: 0.20046594738960266
+step: 28002, cost: 0.24419903755187988
+step: 29002, cost: 0.23832306265830994
+step: 30002, cost: 0.2272772639989853
+step: 31002, cost: 0.1837877780199051
+step: 32002, cost: 0.2505160868167877
+step: 33002, cost: 0.24894025921821594
+step: 34002, cost: 0.2776571214199066
+step: 35002, cost: 0.2385169416666031
+step: 36002, cost: 0.23303425312042236
+step: 37002, cost: 0.2515011727809906
+step: 38002, cost: 0.28878164291381836
+step: 39002, cost: 0.24695982038974762
+step: 40002, cost: 0.2392423152923584
+step: 41002, cost: 0.24971815943717957
+step: 42002, cost: 0.21666210889816284
+step: 43002, cost: 0.22307232022285461
+step: 44002, cost: 0.2502678632736206
+step: 45002, cost: 0.2507425844669342
+step: 46002, cost: 0.24915923178195953
+step: 47002, cost: 0.2848624289035797
+step: 48002, cost: 0.24221399426460266
+step: 49002, cost: 0.38299018144607544
+step: 50002, cost: 0.24581395089626312
+step: 51002, cost: 0.24678228795528412
+step: 52002, cost: 0.2470770627260208
+step: 53002, cost: 0.24813568592071533
+step: 54002, cost: 0.29576316475868225
+step: 55002, cost: 0.24837341904640198
+step: 56002, cost: 0.2416963428258896
+step: 57002, cost: 0.2846592962741852
+step: 58002, cost: 0.24890640377998352
+step: 59002, cost: 0.25776877999305725
+step: 60002, cost: 0.24448774755001068
+step: 61002, cost: 0.25358662009239197
+step: 62002, cost: 0.26913246512413025
+step: 63002, cost: 0.24655550718307495
+step: 64002, cost: 0.333516925573349
+step: 65002, cost: 0.2588123083114624
+step: 66002, cost: 0.25186237692832947
+step: 67002, cost: 0.22741930186748505
+step: 68002, cost: 0.23623499274253845
+step: 69002, cost: 0.24705366790294647
+step: 70002, cost: 0.24471117556095123
+step: 71002, cost: 0.24472492933273315
+step: 72002, cost: 0.23987865447998047
+step: 73002, cost: 0.24340417981147766
+step: 74002, cost: 0.24614347517490387
+step: 75002, cost: 0.25640007853507996
+step: 76002, cost: 0.2573278248310089
+step: 77002, cost: 0.2538186013698578
+step: 78002, cost: 0.259348064661026
+step: 79002, cost: 0.2531709372997284
+step: 80002, cost: 0.25250333547592163
+step: 81002, cost: 0.2640745937824249
+step: 82002, cost: 0.24968788027763367
+step: 83002, cost: 0.2563570439815521
+step: 84002, cost: 0.25009799003601074
+step: 85002, cost: 0.23320356011390686
+step: 86002, cost: 0.2496296465396881
+step: 87002, cost: 0.24739596247673035
+step: 88002, cost: 0.25449973344802856
+step: 89002, cost: 0.24331258237361908
+step: 90002, cost: 0.2333957552909851
+step: 91002, cost: 0.25883203744888306
+step: 92002, cost: 0.2531912326812744
+step: 93002, cost: 0.23932750523090363
+step: 94002, cost: 0.24734200537204742
+step: 95002, cost: 0.2939896881580353
+step: 96002, cost: 0.2580057978630066
+step: 97002, cost: 0.24611620604991913
+step: 98002, cost: 0.26214608550071716
+step: 99002, cost: 0.2670600116252899
+Model saved in file: colornet_model/model.ckpt-99998
+step: 100002, cost: 0.2659244239330292
+^CTraceback (most recent call last):
+  File "auto_colorization.py", line 316, in <module>
+    main()
+  File "auto_colorization.py", line 275, in main
+    training_opt = sess.run(opt, feed_dict={phase_train: True, uv: 2})
+  File "/home/ubuntu/411csc/tfgpu/lib/python3.5/site-packages/tensorflow/python/client/session.py", line 889, in run
+    run_metadata_ptr)
+  File "/home/ubuntu/411csc/tfgpu/lib/python3.5/site-packages/tensorflow/python/client/session.py", line 1120, in _run
+    feed_dict_tensor, options, run_metadata)
+  File "/home/ubuntu/411csc/tfgpu/lib/python3.5/site-packages/tensorflow/python/client/session.py", line 1317, in _do_run
+    options, run_metadata)
+  File "/home/ubuntu/411csc/tfgpu/lib/python3.5/site-packages/tensorflow/python/client/session.py", line 1323, in _do_call
+    return fn(*args)
+  File "/home/ubuntu/411csc/tfgpu/lib/python3.5/site-packages/tensorflow/python/client/session.py", line 1302, in _run_fn
+    status, run_metadata)
+KeyboardInterrupt
+(tfgpu) ➜  411csc Connection to 52.90.87.125 closed by remote host.
+Connection to 52.90.87.125 closed.
+➜  csc2515 
