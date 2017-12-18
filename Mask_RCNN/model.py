@@ -657,6 +657,8 @@ class DetectionTargetLayer(KE.Layer):
 def clip_to_window(window, boxes):
     """
     window: (y1, x1, y2, x2). The window in the image we want to clip to.
+    A minimum window that includes all boxes. This is the part of the image
+    that exclude padding.
     boxes: [N, (y1, x1, y2, x2)]
     """
     boxes[:, 0] = np.maximum(np.minimum(boxes[:, 0], window[2]), window[0])
@@ -905,6 +907,7 @@ def fpn_classifier_graph(rois, feature_maps,
     return mrcnn_class_logits, mrcnn_probs, mrcnn_bbox
 
 
+# Mask Head
 def build_fpn_mask_graph(rois, feature_maps,
                          image_shape, pool_size, num_classes):
     """Builds the computation graph of the mask head of Feature Pyramid Network.
@@ -1930,6 +1933,7 @@ class MaskRCNN():
                 lambda x: x[..., :4] / np.array([h, w, h, w]))(detections)
 
             # Create masks for detections
+            # 411project modification spot
             mrcnn_mask = build_fpn_mask_graph(detection_boxes, mrcnn_feature_maps,
                                               config.IMAGE_SHAPE,
                                               config.MASK_POOL_SIZE,
@@ -2438,8 +2442,10 @@ class MaskRCNN():
         # Pack the generated Numpy arrays into a a dict and log the results.
         outputs_np = OrderedDict([(k, v)
                                   for k, v in zip(outputs.keys(), outputs_np)])
-        for k, v in outputs_np.items():
-            log(k, v)
+        
+        print("{}".format(datetime.datetime.now()))
+        # for k, v in outputs_np.items():
+        #     log(k, v)
         return outputs_np
 
 
