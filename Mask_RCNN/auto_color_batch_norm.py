@@ -1,8 +1,10 @@
 import datetime
 
+import keras
 from keras import Input, Model, optimizers
 from keras.callbacks import TensorBoard
 from keras.models import Sequential
+import keras.layers as KL
 from keras.layers import Conv2D, Dense, Activation, Lambda, Conv2DTranspose, Add, UpSampling2D
 
 import os, sys, random, math
@@ -22,7 +24,7 @@ from keras.metrics import mean_squared_error
 
 ROOT_DIR = os.getcwd()
 MASK_LOGS_DIR = os.path.join(ROOT_DIR, 'Mask_auto_color_batchnorm_logs')
-COCO_MODEL_PATH = os.path.join(ROOT_DIR, 'mask_rcnn_batchnorm_coco.h5')
+COCO_MODEL_PATH = os.path.join(ROOT_DIR, 'mask_rcnn_coco.h5')
 
 TB_LOG_DIR = os.path.join(ROOT_DIR, 'auto_color_tb_bc_logs')
 TESTING_RESULT_DIR = os.path.join(ROOT_DIR, 'auto_color_mrcnn_bc_test')
@@ -60,6 +62,19 @@ CLASS_NAMES = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
 class InferenceConfig(coco.CocoConfig):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
+    
+    
+class BatchNorm(KL.BatchNormalization):
+    """Batch Normalization class. Subclasses the Keras BN class and
+    hardcodes training=False so the BN layer doesn't update
+    during training.
+
+    Batch normalization has a negative effect on training if batches are small
+    so we disable it here.
+    """
+
+    def call(self, inputs, training=None):
+        return super(self.__class__, self).call(inputs, training=False)
 
 
 def main():
@@ -99,7 +114,7 @@ def main():
         print("Loss(bachnorm): {}".format(loss))
         log_auto_color(loss)
     
-    def colorize(filename='000000000813.jpg'):
+    def colorize(filename='000000000643.jpg'):
         """Colorize One picture"""
         X_batch, Y_batch, images = generate_training_datum([filename], image_dir=TESTING_DIR)
         
@@ -174,27 +189,40 @@ def main():
     P3 = Input(shape=(128, 128, 256,), name='P3')
     P2 = Input(shape=(256, 256, 256,), name='P2')
     
+    initer = keras.initializers.RandomUniform(minval=-0.5, maxval=0.5)
+    # activer = 'relu'
+    activer = 'sigmoid'
+    
     # Decode
-    decode_p5 = Conv2D(128, (3, 3), activation='relu', padding='same')(P5)
+    decode_p5 = KL.Conv2D(128, (3, 3), padding='same', bias_initializer=initer, activation=activer,name='decode_p5')(P5)
+    # decode_p5 = KL.TimeDistributed(BatchNorm(axis=3), name='p5_bn')(decode_p5)
+    # decode_p5 = KL.Activation('relu')(decode_p5)
     decode_p5 = UpSampling2D((2, 2))(decode_p5)
-    decode_p4 = Conv2D(128, (1,1), activation='relu', padding='same')(P4)
+    
+    decode_p4 = Conv2D(128, (1,1), padding='same', bias_initializer=initer)(P4)
     decode_p4_5 = Add()([decode_p5, decode_p4])
+    decode_p4_5 = BatchNorm(axis=3, name='p45_bn')(decode_p4_5)
+    decode_p4_5 = KL.Activation(activer)(decode_p4_5)
     
-    decode2_p4_5 = Conv2D(64, (3, 3), activation='relu', padding='same')(decode_p4_5)
+    decode2_p4_5 = Conv2D(64, (3, 3), activation=activer, padding='same', bias_initializer=initer)(decode_p4_5)
     decode2_p4_5 = UpSampling2D((2,2))(decode2_p4_5)
-    decode2_p3 = Conv2D(64, (3, 3), activation='relu', padding='same')(P3)
+    decode2_p3 = Conv2D(64, (3, 3), padding='same', bias_initializer=initer)(P3)
     decode2_p3_4_5 = Add()([decode2_p4_5, decode2_p3])
+    decode2_p3_4_5 = BatchNorm(axis=3, name='p345_bn')(decode2_p3_4_5)
+    decode2_p3_4_5 = KL.Activation(activer)(decode2_p3_4_5)
     
-    decode3_p345 = Conv2D(32, (3, 3), activation='relu', padding='same')(decode2_p3_4_5)
+    decode3_p345 = Conv2D(32, (3, 3), activation=activer, padding='same')(decode2_p3_4_5)
     decode3_p345 = UpSampling2D((2, 2))(decode3_p345)
-    decode3_p2 = Conv2D(32, (1,1), activation='relu', padding='same')(P2)
+    decode3_p2 = Conv2D(32, (1,1), padding='same', bias_initializer=initer)(P2)
     decode3_p2345 = Add()([decode3_p345, decode3_p2])
+    decode3_p2345 = BatchNorm(axis=3, name='p2345_bn')(decode3_p2345)
+    decode3_p2345 = KL.Activation(activer)(decode3_p2345)
     
-    decode_out = Conv2D(16, (3, 3), activation='relu', padding='same')(decode3_p2345)
+    decode_out = Conv2D(16, (3, 3), activation=activer, padding='same', bias_initializer=initer)(decode3_p2345)
     decode_out = UpSampling2D((2, 2))(decode_out)
-    decode_out = Conv2D(4, (3, 3), activation='relu', padding='same')(decode_out)
+    decode_out = Conv2D(4, (3, 3), activation=activer, padding='same', bias_initializer=initer)(decode_out)
     decode_out = UpSampling2D((2, 2))(decode_out)
-    decode_out = Conv2D(2, (3, 3), activation='tanh', padding='same')(decode_out)
+    decode_out = Conv2D(2, (3, 3), activation='tanh', padding='same', bias_initializer=initer)(decode_out)
     
     # build
     tensorboard = TensorBoard(log_dir=TB_LOG_DIR)
@@ -204,7 +232,7 @@ def main():
         print('Found weights')
         model.load_weights('auto_color_batch_norm.h5')
         
-    sgd = optimizers.SGD(lr=0.05, momentum=0.1, decay=0.0, nesterov=False)
+    sgd = optimizers.SGD(lr=0.01, momentum=0.1, decay=0.0, nesterov=False)
     model.compile(optimizer=sgd, loss='mse')
     
     
@@ -218,16 +246,16 @@ def main():
         
         if SHOW is True:
             colored = colorize()
+            report_loss()
 
         # color_files = random.choice(test_file_names)
-        # report_loss()
 
         if i % 10 == 0:
             report_loss()
             colored = colorize()
-            skimage.io.imsave(os.path.join(TESTING_RESULT_DIR, '{}_test_batchnorm_'.format(i) + "00000813.jpg"),arr=colored)
+            skimage.io.imsave(os.path.join(TESTING_RESULT_DIR, '{}_test_batchnorm_'.format(i) + "00000643.jpg"),arr=colored)
         
-        if i % 500 == 499:
+        if i % 300 == 299:
             model.save_weights("{}_color_batchnorm_mrcnn.h5".format(i))
             
     # ===== Store Model ===== #
