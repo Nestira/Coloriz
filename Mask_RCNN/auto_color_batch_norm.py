@@ -100,7 +100,7 @@ def main():
 
     def log_auto_color(s):
         try:
-            log_file = open("loss_hist_bc.txt", 'a')
+            log_file = open("loss_hist_bc_lab.txt", 'a')
             log_file.write('{}\n'.format(s))
             # print("{}: {}".format(str(datetime.now()), s)) # For debugging
         except:
@@ -192,6 +192,8 @@ def main():
     initer = keras.initializers.RandomUniform(minval=-0.5, maxval=0.5)
     # activer = 'relu'
     activer = 'sigmoid'
+    # error = 'mse'
+    error = 'mean_absolute_error'
     
     # Decode
     decode_p5 = KL.Conv2D(128, (3, 3), padding='same', bias_initializer=initer, activation=activer,name='decode_p5')(P5)
@@ -228,12 +230,12 @@ def main():
     tensorboard = TensorBoard(log_dir=TB_LOG_DIR)
     model = Model(inputs=[P5, P4, P3, P2], outputs=decode_out)
     
-    if os.path.isfile('auto_color_batch_norm.h5'):
+    if os.path.isfile('auto_color_batch_norm_lab.h5'):
         print('Found weights')
-        model.load_weights('auto_color_batch_norm.h5')
+        model.load_weights('auto_color_batch_norm_lab.h5')
         
-    sgd = optimizers.SGD(lr=0.01, momentum=0.1, decay=0.0, nesterov=False)
-    model.compile(optimizer=sgd, loss='mse')
+    sgd = optimizers.SGD(lr=0.005, momentum=0.1, decay=0.0, nesterov=False)
+    model.compile(optimizer=sgd, loss=error)
     
     
     # ========= Training =========== #
@@ -253,17 +255,17 @@ def main():
         if i % 10 == 0:
             report_loss()
             colored = colorize()
-            skimage.io.imsave(os.path.join(TESTING_RESULT_DIR, '{}_test_batchnorm_'.format(i) + "00000643.jpg"),arr=colored)
+            skimage.io.imsave(os.path.join(TESTING_RESULT_DIR, '{}_test_batchnorm_lab_'.format(i) + "00000643.jpg"),arr=colored)
         
         if i % 300 == 299:
-            model.save_weights("{}_color_batchnorm_mrcnn.h5".format(i))
+            model.save_weights("{}_color_batchnorm_mrcnn_lab.h5".format(i))
             
     # ===== Store Model ===== #
     # Save model
     model_json = model.to_json()
     with open("batchnorm_model.json", "w") as json_file:
         json_file.write(model_json)
-    model.save_weights("auto_color_batchnorm_final.h5")
+    model.save_weights("auto_color_batchnorm_final_lab.h5")
 
 
 if __name__ == '__main__':
