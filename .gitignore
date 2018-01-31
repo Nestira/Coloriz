@@ -29,3 +29,4 @@ tfenv
 tflearn
 tftut.py
 vgg
+*.h5
