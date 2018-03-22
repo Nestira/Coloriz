@@ -1,7 +1,7 @@
 # Project Proposal: Automatic Colorization
 
-Jiayue Zhang 1003555146 jyzhang.melanie@gmail.com
-Yong Jiang 1003581402 yong.jiang@mail.utoronto.ca
+Jiayue Zhang jyzhang.melanie@gmail.com
+Yong Jiang yong.jiang@mail.utoronto.ca
 
 Inspired by [Automatic Colorization](http://tinyclouds.org/colorize/) using CNN and one of it's application [Autocolored Animation](https://www.youtube.com/watch?v=V8AjYjXxno0) , We want to build a neural network that can differentiate objects in greyscale picture and colorize those objects automatically. We will use a predefined image classification model to extract features to color, and reconstruct it into RGB image directly. 
 
